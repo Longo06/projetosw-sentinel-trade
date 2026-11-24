@@ -1,0 +1,78 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="implantacao" name="SentinelTrade - Diagrama de Implantação">
+    <mxGraphModel dx="1717" dy="780" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="820" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;fontColor=#17365D;" value="SentinelTrade — Diagrama de Implantação" vertex="1">
+          <mxGeometry height="48" width="1450" x="25" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="client" parent="1" style="shape=cube;size=14;darkOpacity=0.05;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" value="&lt;&lt;device&gt;&gt;&lt;br&gt;&lt;b&gt;Dispositivo do Investidor&lt;/b&gt;&lt;hr&gt;Navegador / Aplicativo&lt;br&gt;Interface web/mobile&lt;br&gt;HTTPS / TLS" vertex="1">
+          <mxGeometry height="150" width="250" x="35" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="adminclient" parent="1" style="shape=cube;size=14;darkOpacity=0.05;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" value="&lt;&lt;device&gt;&gt;&lt;br&gt;&lt;b&gt;Estação Administrativa&lt;/b&gt;&lt;hr&gt;Navegador web&lt;br&gt;Acesso restrito por perfil&lt;br&gt;HTTPS / TLS" vertex="1">
+          <mxGeometry height="150" width="250" x="35" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="app" parent="1" style="shape=cube;size=14;darkOpacity=0.05;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" value="&lt;&lt;executionEnvironment&gt;&gt;&lt;br&gt;&lt;b&gt;Servidor de Aplicação SentinelTrade&lt;/b&gt;&lt;hr&gt;API / Backend&lt;br&gt;• Autenticação e MFA&lt;br&gt;• Gestão de carteira e ativos&lt;br&gt;• Serviço de ordens e validação&lt;br&gt;• Gestão de risco e auditoria" vertex="1">
+          <mxGeometry height="340" width="390" x="390" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="queue" parent="1" style="shape=cube;size=14;darkOpacity=0.05;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" value="&lt;&lt;node&gt;&gt;&lt;br&gt;&lt;b&gt;Broker / Message Queue&lt;/b&gt;&lt;hr&gt;Fila de ordens&lt;br&gt;Fila de notificações&lt;br&gt;Processamento assíncrono" vertex="1">
+          <mxGeometry height="160" width="240" x="920" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="db" parent="1" style="shape=cylinder3;boundedLbl=1;size=15;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" value="&lt;&lt;database&gt;&gt;&lt;br&gt;&lt;b&gt;Banco de Dados&lt;/b&gt;&lt;hr&gt;Investidores e contas&lt;br&gt;Ativos e cotações em cache&lt;br&gt;Ordens e eventos&lt;br&gt;Carteiras e posições&lt;br&gt;Auditoria append-only" vertex="1">
+          <mxGeometry height="190" width="390" x="390" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" parent="1" style="shape=cube;size=14;darkOpacity=0.05;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" value="&lt;&lt;node&gt;&gt;&lt;br&gt;&lt;b&gt;Console Administrativo&lt;/b&gt;&lt;hr&gt;Gestão de investidores&lt;br&gt;Gestão de ativos e limites&lt;br&gt;Consulta de auditoria" vertex="1">
+          <mxGeometry height="150" width="240" x="920" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="broker" parent="1" style="shape=cube;size=14;darkOpacity=0.05;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" value="&lt;&lt;externalSystem&gt;&gt;&lt;br&gt;&lt;b&gt;Corretora / Bolsa Simulada&lt;/b&gt;&lt;hr&gt;Ambiente sandbox&lt;br&gt;Recebe ordens e cancelamentos&lt;br&gt;Retorna execução / rejeição" vertex="1">
+          <mxGeometry height="160" width="240" x="1240" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="email" parent="1" style="shape=cube;size=14;darkOpacity=0.05;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" value="&lt;&lt;externalSystem&gt;&gt;&lt;br&gt;&lt;b&gt;Serviço de E-mail&lt;/b&gt;&lt;hr&gt;Entrega código MFA&lt;br&gt;Entrega notificações" vertex="1">
+          <mxGeometry height="130" width="240" x="1240" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="quotes" parent="1" style="shape=cube;size=14;darkOpacity=0.05;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#000000;fontSize=12;align=center;verticalAlign=middle;" value="&lt;&lt;externalSystem&gt;&gt;&lt;br&gt;&lt;b&gt;Provedor de Cotações&lt;/b&gt;&lt;hr&gt;Cotações simuladas&lt;br&gt;Timeout máximo: 3 s" vertex="1">
+          <mxGeometry height="130" width="240" x="1240" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" edge="1" parent="1" source="client" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#44546a;strokeWidth=1.4;fontSize=11;fontColor=#333333;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.2206;entryDx=0;entryDy=0;" target="app" value="HTTPS / TLS">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" edge="1" parent="1" source="adminclient" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#44546a;strokeWidth=1.4;fontSize=11;fontColor=#333333;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.8088;entryDx=0;entryDy=0;" target="app" value="HTTPS / TLS">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d3" edge="1" parent="1" source="app" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#44546a;strokeWidth=1.4;fontSize=11;fontColor=#333333;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="db" value="SQL / conexão segura">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d4" edge="1" parent="1" source="app" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#44546a;strokeWidth=1.4;fontSize=11;fontColor=#333333;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.2353;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="queue" value="Publicação de mensagens">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d5" edge="1" parent="1" source="queue" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#44546a;strokeWidth=1.4;fontSize=11;fontColor=#333333;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="broker" value="HTTPS / TLS • timeout 5 s">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="d6" edge="1" parent="1" source="app" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#44546a;strokeWidth=1.4;fontSize=11;fontColor=#333333;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.7941;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="quotes" value="HTTPS / TLS • timeout 3 s">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="400" />
+              <mxPoint x="1200" y="585" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d7" edge="1" parent="1" source="queue" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#44546a;strokeWidth=1.4;fontSize=11;fontColor=#333333;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.875;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="email" value="HTTPS / TLS">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1195" y="270" />
+              <mxPoint x="1195" y="365" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="d8" edge="1" parent="1" source="admin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#44546a;strokeWidth=1.4;fontSize=11;fontColor=#333333;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.9412;entryDx=0;entryDy=0;" target="app" value="HTTPS / TLS">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="classes_analise" name="SentinelTrade - Classes de Análise">
+    <mxGraphModel dx="1602" dy="601" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="780" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;fontColor=#17365D;" value="SentinelTrade — Diagrama de Classes de Análise" vertex="1">
+          <mxGeometry height="48" width="1350" x="25" y="15" as="geometry" />
+        </mxCell>
+        <mxCell id="investidor" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;&lt;entity&gt;&gt;&lt;br&gt;&lt;b&gt;Investidor&lt;/b&gt;&lt;hr&gt;- id&lt;br&gt;- nome&lt;br&gt;- email&lt;br&gt;- statusConta" vertex="1">
+          <mxGeometry height="145" width="220" x="40" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="conta" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;&lt;entity&gt;&gt;&lt;br&gt;&lt;b&gt;ContaInvestimento&lt;/b&gt;&lt;hr&gt;- id&lt;br&gt;- saldoDisponivel&lt;br&gt;- status" vertex="1">
+          <mxGeometry height="145" width="230" x="310" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="carteira" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;&lt;entity&gt;&gt;&lt;br&gt;&lt;b&gt;Carteira&lt;/b&gt;&lt;hr&gt;- id&lt;br&gt;- posicoes" vertex="1">
+          <mxGeometry height="125" width="210" x="590" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="posicao" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;&lt;entity&gt;&gt;&lt;br&gt;&lt;b&gt;PosicaoAtivo&lt;/b&gt;&lt;hr&gt;- quantidadeTotal&lt;br&gt;- quantidadeReservada" vertex="1">
+          <mxGeometry height="125" width="230" x="850" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ativo" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;&lt;entity&gt;&gt;&lt;br&gt;&lt;b&gt;Ativo&lt;/b&gt;&lt;hr&gt;- ticker&lt;br&gt;- nome&lt;br&gt;- tipo&lt;br&gt;- ativo" vertex="1">
+          <mxGeometry height="145" width="210" x="1140" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ordem" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;&lt;entity&gt;&gt;&lt;br&gt;&lt;b&gt;Ordem&lt;/b&gt;&lt;hr&gt;- id&lt;br&gt;- tipo (compra/venda)&lt;br&gt;- quantidade&lt;br&gt;- preco&lt;br&gt;- estado&lt;br&gt;- idempotencyKey" vertex="1">
+          <mxGeometry height="190" width="250" x="590" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="evento" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;&lt;entity&gt;&gt;&lt;br&gt;&lt;b&gt;EventoOrdem&lt;/b&gt;&lt;hr&gt;- dataHora&lt;br&gt;- estadoAnterior&lt;br&gt;- estadoNovo&lt;br&gt;- descricao" vertex="1">
+          <mxGeometry height="140" width="230" x="1123" y="271" as="geometry" />
+        </mxCell>
+        <mxCell id="limite" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;&lt;entity&gt;&gt;&lt;br&gt;&lt;b&gt;LimiteRisco&lt;/b&gt;&lt;hr&gt;- valorMaximoOrdem&lt;br&gt;- exposicaoDiaria" vertex="1">
+          <mxGeometry height="125" width="230" x="40" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="auditoria" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;&lt;entity&gt;&gt;&lt;br&gt;&lt;b&gt;RegistroAuditoria&lt;/b&gt;&lt;hr&gt;- id&lt;br&gt;- tipoEvento&lt;br&gt;- dataHora&lt;br&gt;- detalhes" vertex="1">
+          <mxGeometry height="135" width="240" x="746" y="592" as="geometry" />
+        </mxCell>
+        <mxCell id="cotacao" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;&lt;entity&gt;&gt;&lt;br&gt;&lt;b&gt;Cotacao&lt;/b&gt;&lt;hr&gt;- preco&lt;br&gt;- dataHora" vertex="1">
+          <mxGeometry height="100" width="210" x="1116" y="505" as="geometry" />
+        </mxCell>
+        <mxCell id="enviar" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;" value="&lt;&lt;control&gt;&gt;&lt;br&gt;&lt;b&gt;Servico de Ordem&lt;/b&gt;&lt;hr&gt;+ validarOrdem()&lt;br&gt;+ enviarOrdem()&lt;br&gt;+ cancelarOrdem()" vertex="1">
+          <mxGeometry height="135" width="230" x="40" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="tela" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fontSize=12;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;&lt;boundary&gt;&gt;&lt;br&gt;&lt;b&gt;Tela de Ordens&lt;/b&gt;&lt;hr&gt;+ informarDados()&lt;br&gt;+ confirmarPIN()&lt;br&gt;+ exibirResultado()" vertex="1">
+          <mxGeometry height="125" width="230" x="450" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="investidor" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;" target="conta" value="1        1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="investidor" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;" target="limite" value="1        1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="conta" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;" target="carteira" value="1        1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="carteira" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;" target="posicao" value="1        0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="posicao" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;" target="ativo" value="*        1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="investidor" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;exitX=1;exitY=1;exitDx=0;exitDy=0;" target="ordem" value="1        0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="ordem" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;" target="evento" value="1        0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="ordem" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;" target="ativo" value="*        1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="ordem" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;" target="cotacao" value="*        1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="ordem" style="endArrow=none;html=1;rounded=0;strokeColor=#666666;" target="auditoria" value="1        0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="enviar" style="dashed=1;endArrow=open;html=1;strokeColor=#9673a6;exitX=0.878;exitY=0.023;exitDx=0;exitDy=0;exitPerimeter=0;" target="ordem" value="gerencia">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="tela" style="dashed=1;endArrow=open;html=1;strokeColor=#82b366;" target="enviar" value="solicita">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
