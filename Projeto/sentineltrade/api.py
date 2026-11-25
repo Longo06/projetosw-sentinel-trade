@@ -1,9 +1,11 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import NoReturn
 from fastapi import FastAPI, Depends, HTTPException, Query
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from . import __version__
@@ -29,9 +31,21 @@ app = FastAPI(title="SentinelTrade API", version=__version__, lifespan=lifespan,
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
+# Front-end estático (HTML/CSS/JS puro) servido pela própria API: sem etapa de build.
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
 @app.get("/", include_in_schema=False)
 def home():
-    return RedirectResponse(url="/docs")
+    return FileResponse(
+        STATIC_DIR / "index.html",
+        headers={
+            # O front não usa scripts nem estilos inline; bloqueia qualquer origem externa.
+            "Content-Security-Policy": "default-src 'self'; frame-ancestors 'none'",
+            "X-Content-Type-Options": "nosniff",
+            "Cache-Control": "no-store",
+        },
+    )
 
 def fail(exc) -> NoReturn:
     if isinstance(exc, BusinessError): raise HTTPException(status_code=400, detail=str(exc))
@@ -125,7 +139,7 @@ def get_portfolio(db:Session=Depends(get_db),user:Investor=Depends(current_user)
 @app.get("/api/assets")
 def list_assets(db:Session=Depends(get_db),user:Investor=Depends(current_user)):
     assets=db.scalars(select(Asset).where(Asset.active.is_(True)).order_by(Asset.symbol)).all()
-    return [{"symbol":a.symbol,"name":a.name,"price":str(a.last_price),"quote_at":a.quote_at} for a in assets]
+    return [{"id":a.id,"symbol":a.symbol,"name":a.name,"price":str(a.last_price),"quote_at":a.quote_at} for a in assets]
 
 @app.post("/api/assets",status_code=201)
 def add_asset(data:AssetCreate,db:Session=Depends(get_db),admin:Investor=Depends(require_roles(Role.ADMIN))):

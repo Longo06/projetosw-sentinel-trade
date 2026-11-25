@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SentinelTrade · Orion Capital</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- ========== LOGIN / CADASTRO ========== -->
+  <main id="view-auth" class="auth">
+    <div class="card auth-card">
+      <h1>SentinelTrade</h1>
+      <p class="muted">Plataforma <strong>simulada</strong> de negociação · Orion Capital. Não movimenta dinheiro real.</p>
+
+      <div class="seg" id="auth-tabs">
+        <button type="button" class="active" data-auth="login">Entrar</button>
+        <button type="button" data-auth="register">Criar conta</button>
+      </div>
+
+      <form id="form-login" autocomplete="on">
+        <label>E-mail
+          <input type="email" name="email" required autocomplete="username" placeholder="investidor@sentineltrade.local">
+        </label>
+        <label>Senha
+          <input type="password" name="password" required autocomplete="current-password">
+        </label>
+        <button class="primary" type="submit">Continuar</button>
+      </form>
+
+      <form id="form-mfa" hidden autocomplete="off">
+        <p class="muted">Enviamos um código de 6 dígitos por e-mail (simulado). Ele vale por 5 minutos.</p>
+        <p id="mfa-debug" class="notice" hidden></p>
+        <label>Código MFA
+          <input type="text" name="code" inputmode="numeric" pattern="\d{6}" maxlength="6" required autocomplete="one-time-code">
+        </label>
+        <div class="row">
+          <button class="ghost" type="button" id="mfa-back">Voltar</button>
+          <button class="primary" type="submit">Verificar e entrar</button>
+        </div>
+      </form>
+
+      <form id="form-register" hidden autocomplete="off">
+        <label>Nome
+          <input type="text" name="name" required minlength="2" maxlength="120">
+        </label>
+        <label>E-mail
+          <input type="email" name="email" required maxlength="180">
+        </label>
+        <label>Senha (mín. 8 caracteres)
+          <input type="password" name="password" required minlength="8" maxlength="128" autocomplete="new-password">
+        </label>
+        <label>PIN transacional (4 a 8 dígitos)
+          <input type="password" name="pin" required inputmode="numeric" pattern="\d{4,8}" maxlength="8" autocomplete="off">
+        </label>
+        <button class="primary" type="submit">Criar conta</button>
+      </form>
+
+      <p id="auth-error" class="error" role="alert" hidden></p>
+      <p class="muted small">Contas de demonstração: veja a seção “Contas fictícias” do README (<code>python seed.py</code>).</p>
+    </div>
+  </main>
+
+  <!-- ========== APLICAÇÃO ========== -->
+  <div id="view-app" hidden>
+    <header class="topbar">
+      <div class="brand">SentinelTrade <span class="tag">simulado</span></div>
+      <div class="who">
+        <span id="user-name"></span>
+        <span id="user-role" class="badge"></span>
+        <button class="ghost small" id="btn-logout" type="button">Sair</button>
+      </div>
+    </header>
+
+    <nav id="tabs" class="tabs" aria-label="Seções"></nav>
+
+    <main class="content">
+      <!-- Resumo -->
+      <section class="panel" id="panel-resumo" hidden>
+        <div class="grid">
+          <div class="card stat">
+            <span class="muted">Saldo disponível</span>
+            <strong id="balance">—</strong>
+          </div>
+          <div class="card stat">
+            <span class="muted">Posições em carteira</span>
+            <strong id="pos-count">—</strong>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Carteira</h2><button class="ghost small" data-refresh="resumo" type="button">Atualizar</button></div>
+          <div class="table-wrap"><table id="tbl-positions"></table></div>
+        </div>
+        <div class="card">
+          <h2>Cotações</h2>
+          <div class="table-wrap"><table id="tbl-assets"></table></div>
+        </div>
+      </section>
+
+      <!-- Nova ordem -->
+      <section class="panel" id="panel-ordem" hidden>
+        <div class="card narrow">
+          <h2>Nova ordem</h2>
+          <form id="form-order" autocomplete="off">
+            <label>Ativo
+              <select name="symbol" id="order-symbol" required></select>
+            </label>
+            <p class="muted small" id="order-quote"></p>
+            <div class="seg" id="side-seg">
+              <button type="button" class="active buy" data-side="BUY">Comprar</button>
+              <button type="button" class="sell" data-side="SELL">Vender</button>
+            </div>
+            <label>Quantidade
+              <input type="number" name="quantity" min="1" max="1000000" step="1" required value="1">
+            </label>
+            <label>Tipo
+              <select name="order_type" id="order-type">
+                <option value="MARKET">A mercado</option>
+                <option value="LIMIT">Limitada</option>
+              </select>
+            </label>
+            <label id="limit-wrap" hidden>Preço limite (R$)
+              <input type="number" name="limit_price" min="0.01" step="0.01" inputmode="decimal">
+            </label>
+            <p class="muted small" id="order-total"></p>
+            <label>PIN transacional
+              <input type="password" name="pin" required inputmode="numeric" pattern="\d{4,8}" maxlength="8" autocomplete="off">
+            </label>
+            <button class="primary" type="submit">Enviar ordem</button>
+          </form>
+          <p class="muted small">Ordens só são aceitas em dias úteis, das 10:00 às 17:55 (Brasília).</p>
+        </div>
+      </section>
+
+      <!-- Ordens -->
+      <section class="panel" id="panel-ordens" hidden>
+        <div class="card">
+          <div class="card-head"><h2>Minhas ordens</h2><button class="ghost small" data-refresh="ordens" type="button">Atualizar</button></div>
+          <div class="table-wrap"><table id="tbl-orders"></table></div>
+        </div>
+      </section>
+
+      <!-- Notificações -->
+      <section class="panel" id="panel-notif" hidden>
+        <div class="card">
+          <div class="card-head"><h2>Notificações</h2><button class="ghost small" data-refresh="notif" type="button">Atualizar</button></div>
+          <ul id="list-notif" class="plain"></ul>
+        </div>
+      </section>
+
+      <!-- Corretora (simulada) -->
+      <section class="panel" id="panel-corretora" hidden>
+        <div class="card narrow">
+          <h2>Retorno da corretora (simulado)</h2>
+          <p class="muted small">Simula a execução de uma ordem que está <em>SENT</em> ou <em>PARTIALLY_FILLED</em>.</p>
+          <form id="form-broker" autocomplete="off">
+            <label>ID da ordem
+              <input type="number" name="order_id" min="1" step="1" required>
+            </label>
+            <label>Novo estado
+              <select name="status">
+                <option value="FILLED">FILLED (executada)</option>
+                <option value="PARTIALLY_FILLED">PARTIALLY_FILLED (parcial)</option>
+                <option value="REJECTED">REJECTED (rejeitada)</option>
+              </select>
+            </label>
+            <label>Quantidade executada (total acumulado)
+              <input type="number" name="filled_quantity" min="0" step="1" value="0" required>
+            </label>
+            <label>Mensagem (opcional)
+              <input type="text" name="message" maxlength="500">
+            </label>
+            <button class="primary" type="submit">Aplicar retorno</button>
+          </form>
+          <pre id="broker-result" class="result" hidden></pre>
+        </div>
+      </section>
+
+      <!-- Administração -->
+      <section class="panel" id="panel-admin" hidden>
+        <div class="grid two">
+          <div class="card">
+            <h2>Novo ativo</h2>
+            <form id="form-asset-new" autocomplete="off">
+              <label>Símbolo (ex.: MGLU3)
+                <input type="text" name="symbol" required minlength="3" maxlength="20" pattern="[A-Z0-9]+">
+              </label>
+              <label>Nome
+                <input type="text" name="name" required minlength="2" maxlength="120">
+              </label>
+              <label>Preço (R$)
+                <input type="number" name="price" required min="0.01" step="0.01">
+              </label>
+              <button class="primary" type="submit">Cadastrar ativo</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Editar ativo</h2>
+            <form id="form-asset-edit" autocomplete="off">
+              <label>ID do ativo
+                <input type="number" name="asset_id" required min="1" step="1">
+              </label>
+              <label>Nome (opcional)
+                <input type="text" name="name" minlength="2" maxlength="120">
+              </label>
+              <label>Novo preço (opcional)
+                <input type="number" name="price" min="0.01" step="0.01">
+              </label>
+              <label>Situação
+                <select name="active">
+                  <option value="">Não alterar</option>
+                  <option value="true">Ativo</option>
+                  <option value="false">Inativo</option>
+                </select>
+              </label>
+              <button class="primary" type="submit">Salvar alterações</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Investidor</h2>
+            <form id="form-investor" autocomplete="off">
+              <label>ID do investidor
+                <input type="number" name="investor_id" required min="1" step="1">
+              </label>
+              <label>Nome (opcional)
+                <input type="text" name="name" minlength="2" maxlength="120">
+              </label>
+              <label>Situação
+                <select name="active">
+                  <option value="">Não alterar</option>
+                  <option value="true">Ativo</option>
+                  <option value="false">Inativo</option>
+                </select>
+              </label>
+              <button class="primary" type="submit">Salvar alterações</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h2>Limites de risco</h2>
+            <form id="form-risk" autocomplete="off">
+              <label>ID do investidor
+                <input type="number" name="investor_id" required min="1" step="1">
+              </label>
+              <label>Limite por ordem (R$)
+                <input type="number" name="daily_order_limit" required min="0.01" max="1000000" step="0.01">
+              </label>
+              <label>Exposição diária (R$)
+                <input type="number" name="daily_exposure_limit" required min="0.01" max="10000000" step="0.01">
+              </label>
+              <button class="primary" type="submit">Atualizar limites</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Auditoria -->
+      <section class="panel" id="panel-auditoria" hidden>
+        <div class="card">
+          <h2>Registros de auditoria</h2>
+          <form id="form-audit" class="filters" autocomplete="off">
+            <label>ID do investidor<input type="number" name="investor_id" min="1" step="1"></label>
+            <label>Tipo de evento<input type="text" name="event_type" placeholder="ORDER_CREATED"></label>
+            <label>Quantidade<input type="number" name="limit" min="1" max="500" value="100"></label>
+            <button class="primary" type="submit">Filtrar</button>
+          </form>
+          <div class="table-wrap"><table id="tbl-audit"></table></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
