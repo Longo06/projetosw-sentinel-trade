@@ -92,6 +92,25 @@ def test_blocked_account_cannot_finish_mfa(db, investor):
         services.verify_mfa(db, challenge.id, code)
 
 
+def test_relogin_does_not_reset_failures_so_mfa_guessing_still_blocks(db, investor):
+    """RN-12: errar o MFA, logar de novo e repetir não pode zerar o contador de falhas."""
+    for _ in range(3):
+        _, challenge, code = services.login_start(db, investor.email, PASSWORD)
+        wrong = "000000" if code != "000000" else "111111"
+        with pytest.raises(BusinessError, match="inválido"):
+            services.verify_mfa(db, challenge.id, wrong)
+    with pytest.raises(BusinessError, match="bloqueada"):
+        services.login_start(db, investor.email, PASSWORD)
+
+
+def test_successful_mfa_resets_failure_counter(db, investor):
+    with pytest.raises(BusinessError):
+        services.login_start(db, investor.email, "senha-errada")
+    _, challenge, code = services.login_start(db, investor.email, PASSWORD)
+    services.verify_mfa(db, challenge.id, code)
+    assert investor.failed_attempts == 0
+
+
 # ---------- envio de ordens ----------
 
 def test_buy_order_reserves_balance_and_is_sent(db, investor, asset, market_open):
@@ -138,6 +157,22 @@ def test_wrong_pin_is_rejected_and_blocks_after_three_failures(db, investor, ass
             services.place_order(db, investor, order_data(pin="9999"))
     with pytest.raises(BusinessError, match="bloqueada"):
         services.place_order(db, investor, order_data(pin=PIN))
+
+
+def test_correct_pin_resets_consecutive_failures(db, investor, asset, market_open):
+    for _ in range(2):
+        with pytest.raises(BusinessError, match="PIN"):
+            services.place_order(db, investor, order_data(pin="9999"))
+    services.place_order(db, investor, order_data())            # PIN correto zera a sequência
+    assert investor.failed_attempts == 0
+    with pytest.raises(BusinessError, match="PIN"):             # 1ª falha de uma nova sequência
+        services.place_order(db, investor, order_data(pin="9999"))
+    assert investor.blocked_until is None
+
+
+def test_market_order_does_not_store_limit_price(db, investor, asset, market_open):
+    order = services.place_order(db, investor, order_data(limit_price=Decimal("1.00")))
+    assert order.order_type == "MARKET" and order.limit_price is None
 
 
 def test_limit_order_requires_limit_price(db, investor, asset, market_open):

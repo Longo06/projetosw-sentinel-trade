@@ -52,6 +52,7 @@ Por ser um sistema crítico, o projeto prioriza **segurança, consistência de d
 | Fila de mensagens | Não implementada: notificações são gravadas no banco e exibidas no console (ver [limitações](#limitações-conhecidas-e-passos-externos)) |
 | Serviço de cotações (externo) | Adaptador simulado (`SimulatedQuoteProvider`) |
 | Corretora / sandbox (externo) | Adaptador simulado (`SimulatedBroker`) |
+| Front-end | HTML/CSS/JS puro em `sentineltrade/static/`, servido pela própria API em `http://127.0.0.1:8000/` (sem build) |
 | Serviço de e-mail (externo) | Simulado: o código MFA é devolvido na resposta apenas em desenvolvimento |
 | Testes | pytest + `TestClient` do FastAPI (httpx) |
 | Modelagem UML | Draw.io (fontes editáveis em `docs/uml/`) |
@@ -66,6 +67,7 @@ Módulos do pacote `sentineltrade/`:
 - `schemas.py`: validação dos dados de entrada.
 - `api.py`: interface HTTP, validação e autorização.
 - `config.py` e `db.py`: configuração (variáveis de ambiente) e conexão com o banco.
+- `static/`: front-end (`index.html`, `app.js`, `style.css`) servido em `/` com cabeçalhos de segurança (CSP).
 
 ## Estrutura do repositório
 
@@ -76,6 +78,7 @@ Projeto/
 ├── requirements.txt
 ├── .env.example             # nomes das variáveis de ambiente (sem segredos reais)
 ├── sentineltrade/           # código-fonte da aplicação
+│   └── static/              # front-end (HTML/CSS/JS)
 ├── tests/                   # testes automatizados
 └── docs/                    # requisitos, diagramas e notas de implementação
 ```
@@ -88,9 +91,8 @@ Toda a documentação fica na pasta [`docs/`](docs/):
 |---|---|
 | [requisitos_sentineltrade.md](docs/requisitos_sentineltrade.md) | Visão, atores, requisitos funcionais e não funcionais, regras de negócio, restrições técnicas, critérios de aceitação, casos de uso, pensamento sistêmico e matriz de rastreabilidade |
 | [IMPLEMENTACAO_PYTHON.md](docs/IMPLEMENTACAO_PYTHON.md) | Mapeamento entre requisitos e endpoints, decisões e limites da versão |
-| Diagrama de casos de uso (imagem N1) | [Visualizar diagrama](docs/diagrama_casos_de_uso.png) |
+| Diagrama de casos de uso (imagem) | [Visualizar diagrama](docs/uml/casos_de_uso.png) |
 | Diagramas UML editáveis | [Fontes Draw.io e instruções](docs/uml/README.md) |
-| [ARQUIVOS_IMPLEMENTACAO.md](ARQUIVOS_IMPLEMENTACAO.md) | Lista dos arquivos da implementação |
 
 ## Instalação e execução
 
@@ -124,7 +126,7 @@ python seed.py
 python main.py
 ```
 
-A API estará em `http://127.0.0.1:8000`. Documentação interativa: `http://127.0.0.1:8000/docs`.
+A API estará em `http://127.0.0.1:8000` (a interface web abre na raiz `/`). Documentação interativa: `http://127.0.0.1:8000/docs`.
 
 Edite o `.env` com os valores locais (**nunca versione o `.env`**). Variáveis lidas pela aplicação:
 
@@ -162,6 +164,7 @@ O código MFA aparece no campo `debug_code` somente quando `APP_ENV=development`
 
 | Método | Endpoint | Acesso |
 |---|---|---|
+| GET | `/` | Público (interface web) |
 | GET | `/health` | Público |
 | POST | `/api/investors` | Público (cadastro de investidor) |
 | GET | `/api/investors/me` | Autenticado |
@@ -187,7 +190,7 @@ As listagens (`orders`, `history`, `notifications`, `audit`) aceitam `limit` (1�
 
 - Hash PBKDF2-HMAC-SHA256 com salt para senha e PIN.
 - MFA de seis dígitos, validade de cinco minutos e até três tentativas; um novo login invalida desafios anteriores.
-- Bloqueio de 15 minutos após três falhas consecutivas de senha, PIN ou MFA; conta bloqueada não autentica nem opera.
+- Bloqueio de 15 minutos após três falhas consecutivas de senha, PIN ou MFA (o contador só zera com login completo via MFA ou com PIN correto); conta bloqueada não autentica nem opera.
 - Estados de ordem com transições explicitamente permitidas, incluindo execuções parciais sucessivas.
 - Retornos da corretora validados: `FILLED` exige a quantidade total, `PARTIALLY_FILLED` exige quantidade parcial, `REJECTED` não pode ter execução; mensagens repetidas são idempotentes.
 - Idempotência por investidor + chave única.
@@ -205,7 +208,7 @@ As listagens (`orders`, `history`, `notifications`, `audit`) aceitam `limit` (1�
 pytest -q
 ```
 
-Os testes usam um SQLite temporário (nunca o banco local) e cobrem hash de credenciais, token assinado, máquina de estados, janela de negociação, autenticação/MFA/bloqueio, envio e cancelamento de ordens, execuções parciais, idempotência, limites de risco e autorização na API.
+Os testes usam um SQLite temporário (nunca o banco local) e cobrem hash de credenciais, token assinado, máquina de estados, janela de negociação, autenticação/MFA/bloqueio, envio e cancelamento de ordens, execuções parciais, idempotência, limites de risco, autorização na API e entrega do front-end estático.
 
 ## Segurança e boas práticas
 

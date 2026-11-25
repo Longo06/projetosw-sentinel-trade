@@ -86,7 +86,8 @@ def login_start(db: Session, email: str, password: str):
     if not verify_secret(password, user.password_hash):
         register_failure(db, user, "LOGIN_FAILURE")
         raise BusinessError("Credenciais inválidas.")
-    user.failed_attempts = 0
+    # Não zera failed_attempts aqui: a senha correta é só o 1º fator. O contador só zera quando o MFA
+    # é concluído (verify_mfa); senão, repetir login + 2 códigos errados contornaria o bloqueio (RN-12).
     # Um novo login invalida desafios MFA anteriores ainda pendentes.
     for old in db.scalars(select(MfaChallenge).where(MfaChallenge.investor_id == user.id,
                                                      MfaChallenge.used.is_(False))):
@@ -165,6 +166,7 @@ def place_order(db: Session, investor: Investor, data, now: datetime | None = No
     if not verify_secret(data.pin, investor.pin_hash):
         register_failure(db, investor, "PIN_FAILURE")
         raise BusinessError("PIN transacional inválido.")
+    investor.failed_attempts = 0  # PIN correto encerra a sequência de falhas consecutivas (RN-12)
     is_limit = data.order_type == OrderType.LIMIT
     if is_limit and data.limit_price is None:
         raise BusinessError("Ordens LIMIT exigem o campo limit_price.")
@@ -198,7 +200,7 @@ def place_order(db: Session, investor: Investor, data, now: datetime | None = No
         position.reserved_quantity += data.quantity
         reserved_qty = data.quantity
     order = TradeOrder(investor_id=investor.id, asset_id=asset.id, side=data.side.value,
-        order_type=data.order_type.value, quantity=data.quantity, limit_price=data.limit_price,
+        order_type=data.order_type.value, quantity=data.quantity, limit_price=data.limit_price if is_limit else None,
         reference_price=price, reserved_cash=reserved_cash, reserved_quantity=reserved_qty,
         status="CREATED", idempotency_key=data.idempotency_key)
     db.add(order); db.flush()
